@@ -2,8 +2,11 @@ CC := clang++
 TARGET := test
 SFML_FLAGS := -lsfml-system -lsfml-window -lsfml-graphics
 
-all: gridrectangle.o
-	$(CC) -o $(TARGET) main.cpp gridrectangle.o $(SFML_FLAGS)
+all: gridrectangle.o qtree.o
+	$(CC) -o $(TARGET) main.cpp gridrectangle.o qtree.o $(SFML_FLAGS)
+
+qtree.o: gridrectangle.o
+	$(CC) -c qtree.cpp
 
 gridrectangle.o:
 	$(CC) -c gridrectangle.cpp
@@ -12,4 +15,4 @@ clean:
 	rm $(TARGET)
 
 cleanall:
-	rm $(TARGET) gridrectangle.o
+	rm $(TARGET) gridrectangle.o qtree.o

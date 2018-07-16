@@ -8,7 +8,7 @@
 #include "qtree.h"
 
 int myRand(int pos);
-void addDots(sf::RenderWindow& window, std::vector<sf::CircleShape*>& vec, QTree<sf::CircleShape*>& qtree);
+void addDots(sf::RenderWindow& window, std::vector<sf::CircleShape*>& vec, QTree& qtree);
 void removeDots(std::vector<sf::CircleShape*>& vec);
 
 int main(int argc, char* argv[]) {
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     std::srand(time(0));
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "Qtree test");
     std::vector<sf::CircleShape*> dotVector;
-    QTree<sf::CircleShape*> q(5, sf::Rect<int>(0,0,window.getSize().x, window.getSize().y), &window);
+    QTree q(5, sf::Rect<int>(0,0,window.getSize().x, window.getSize().y), &window);
     
 
     while (window.isOpen()) {
@@ -46,22 +46,22 @@ int main(int argc, char* argv[]) {
             }
         }
         window.clear(sf::Color::Black);
-        q.draw();
-
         for (sf::CircleShape* d : dotVector) {
             window.draw(*d);
         }
+        q.draw();
         window.display();
     }
 }
 
-void addDots(sf::RenderWindow& window, std::vector<sf::CircleShape*>& vec, QTree<sf::CircleShape*>& qtree) {
+void addDots(sf::RenderWindow& window, std::vector<sf::CircleShape*>& vec, QTree& qtree) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     sf::CircleShape* circle = new sf::CircleShape(2);
-    circle->setPosition(myRand(mousePos.x), myRand(mousePos.y));
+    //circle->setPosition(myRand(mousePos.x), myRand(mousePos.y));
+    circle->setPosition(mousePos.x, mousePos.y);
     circle->setFillColor(sf::Color::Green);
     vec.push_back(circle);
-    qtree.insert(circle);
+    qtree.insert(*circle);
 }
 
 int myRand(int pos) { return pos + (rand() % 20 - 10); }
