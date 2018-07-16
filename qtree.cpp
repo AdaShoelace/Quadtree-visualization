@@ -1,7 +1,7 @@
 #include "qtree.h"
 
-QTree::QTree(int capacity, sf::Rect<int> boundary, sf::RenderWindow *window)
-    : capacity(capacity), boundary(boundary), window(window) {
+QTree::QTree(int capacity, sf::FloatRect boundary, sf::RenderWindow *window)
+    : capacity(capacity), boundary{boundary}, window(window) {
     shape.setPosition(boundary.left, boundary.top);
     shape.setSize(sf::Vector2f(boundary.width, boundary.height));
     shape.setFillColor(sf::Color(0, 0, 0, 0));
@@ -46,29 +46,45 @@ void QTree::subdivide() {
     int halfWidth = boundary.width * 0.5;
     int halfHeight = boundary.height * 0.5;
 
-    sf::Rect<int> nwBoundary(boundary.left, boundary.top, halfWidth,
+    sf::FloatRect nwBoundary(boundary.left, boundary.top, halfWidth,
                              halfHeight);
     nw = new QTree(capacity, nwBoundary, window);
 
-    sf::Rect<int> neBoundary(boundary.left + halfWidth, boundary.top, halfWidth,
+    sf::FloatRect neBoundary(boundary.left + halfWidth, boundary.top, halfWidth,
                              halfHeight);
     ne = new QTree(capacity, neBoundary, window);
 
-    sf::Rect<int> swBoundary(boundary.left, boundary.top + halfHeight,
+    sf::FloatRect swBoundary(boundary.left, boundary.top + halfHeight,
                              halfWidth, halfHeight);
     sw = new QTree(capacity, swBoundary, window);
 
-    sf::Rect<int> seBoundary(boundary.left + halfWidth,
+    sf::FloatRect seBoundary(boundary.left + halfWidth,
                              boundary.top + halfHeight, halfWidth, halfHeight);
     se = new QTree(capacity, seBoundary, window);
     divided = true;
     std::cout << "Subdividing!\n";
 }
 
-std::vector<sf::Transformable *> QTree::query() {
-    return std::vector<sf::Transformable *>();
+std::vector<sf::Transformable *> QTree::query(sf::FloatRect range, std::vector<sf::Transformable*>& found) {
+    if(!((sf::FloatRect)boundary).intersects(range)) {
+        return found;
+    } else {
+        for(auto& p : objList) {
+            if(range.contains(p.getPosition().x, p.getPosition().y)) {
+                found.push_back(&p);
+            }
+        }
+    }
+
+    if(divided) {
+        nw->query(range, found);
+        ne->query(range, found);
+        sw->query(range, found);
+        se->query(range, found);
+    }
+    return found;
 }
 
-void QTree::clean() {
+void QTree::clear() {
     // recursive clean up (dfs)
 }

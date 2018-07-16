@@ -7,15 +7,16 @@
 
 class QTree {
    public:
-    QTree(int capacity, sf::Rect<int> boundary, sf::RenderWindow *window);
+    QTree(int capacity, sf::FloatRect boundary, sf::RenderWindow *window);
     void insert(sf::Transformable obj);
     void draw();     // debug only
+    std::vector<sf::Transformable*> query(sf::FloatRect range, std::vector<sf::Transformable*>& found);
 
    private:
     bool divided = false;
     sf::RectangleShape shape;
     unsigned int capacity;
-    sf::Rect<int> boundary;
+    sf::FloatRect boundary;
     sf::RenderWindow *window;
     std::vector<sf::Transformable> objList;
     QTree *nw = NULL;
@@ -24,6 +25,5 @@ class QTree {
     QTree *se = NULL;
 
     void subdivide();
-    std::vector<sf::Transformable *> query();
-    void clean();
+    void clear();
 };
