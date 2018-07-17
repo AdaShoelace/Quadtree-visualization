@@ -21,10 +21,10 @@ class QTree {
     sf::FloatRect boundary;
     sf::RenderWindow *window;
     std::vector<sf::Transformable> objList;
-    QTree *nw = NULL;
-    QTree *ne = NULL;
-    QTree *sw = NULL;
-    QTree *se = NULL;
+    QTree *nw = nullptr;
+    QTree *ne = nullptr;
+    QTree *sw = nullptr;
+    QTree *se = nullptr;
 
     void subdivide();
 };
