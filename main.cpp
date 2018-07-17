@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <random>
+#include <string>
 #include <vector>
 #include "qtree.h"
 
@@ -38,15 +39,29 @@ int main(int argc, char* argv[]) {
     rangeRect.setOrigin(rangeRect.getSize().x / 2, rangeRect.getSize().y / 2);
     std::vector<sf::Transformable*> found;
 
+    sf::Font font;
+    font.loadFromFile("./Ubuntu-Regular.ttf");
+    const int textSize = 25;
+    std::string rangeLabelContent = "In range: ";
+    std::string countLabelContent = "Total count: ";
+    sf::Text rangeLabel(rangeLabelContent + std::to_string(0), font, 10);
+    sf::Text countLabel(countLabelContent, font, 10);
+
+    rangeLabel.setPosition(0, 0);
+    countLabel.setPosition(rangeLabel.getPosition().x,
+                           rangeLabel.getPosition().y + textSize);
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.key.code == sf::Keyboard::Escape ||
-                event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed ||
+                (event.type == sf::Event::KeyPressed &&
+                 event.key.code == sf::Keyboard::Escape)) {
                 window.close();
             }
 
-            if(event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R) {
+            if (event.type == sf::Event::KeyReleased &&
+                event.key.code == sf::Keyboard::R) {
                 rectMouse = !rectMouse;
             }
 
@@ -57,6 +72,7 @@ int main(int argc, char* argv[]) {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
                 sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
                 removeDots(dotVector);
+                q.clear();
                 window.clear(sf::Color::Black);
             }
         }
@@ -72,8 +88,11 @@ int main(int argc, char* argv[]) {
             window.draw(rangeRect);
             auto tempfound = q.query(rangeRect.getGlobalBounds(), found);
 
-            //debug
+            // debug
             std::cout << "In range: " << tempfound.size() << "\n";
+
+            rangeLabel.setString(rangeLabelContent +
+                                 std::to_string(tempfound.size()));
 
             for (auto p : tempfound) {
                 sf::CircleShape c(2);
@@ -84,6 +103,11 @@ int main(int argc, char* argv[]) {
         } else {
             window.setMouseCursorVisible(true);
         }
+        
+        countLabel.setString(countLabelContent + std::to_string(dotVector.size()));
+
+        window.draw(rangeLabel);
+        window.draw(countLabel);
 
         found.clear();
         window.display();

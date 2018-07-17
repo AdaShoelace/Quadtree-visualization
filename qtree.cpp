@@ -1,6 +1,6 @@
 #include "qtree.h"
 
-QTree::QTree(int capacity, sf::FloatRect boundary, sf::RenderWindow *window)
+QTree::QTree(int capacity, sf::FloatRect boundary, sf::RenderWindow* window)
     : capacity(capacity), boundary{boundary}, window(window) {
     shape.setPosition(boundary.left, boundary.top);
     shape.setSize(sf::Vector2f(boundary.width, boundary.height));
@@ -10,6 +10,15 @@ QTree::QTree(int capacity, sf::FloatRect boundary, sf::RenderWindow *window)
 
     std::cout << "Boundary width: " << boundary.width
               << " Boundary height: " << boundary.height << std::endl;
+}
+
+QTree::~QTree() {
+    if(divided) {
+        delete nw;
+        delete ne;
+        delete sw;
+        delete se;
+    }
 }
 
 void QTree::insert(sf::Transformable obj) {
@@ -65,18 +74,19 @@ void QTree::subdivide() {
     std::cout << "Subdividing!\n";
 }
 
-std::vector<sf::Transformable *> QTree::query(sf::FloatRect range, std::vector<sf::Transformable*>& found) {
-    if(!((sf::FloatRect)boundary).intersects(range)) {
+std::vector<sf::Transformable*> QTree::query(
+    sf::FloatRect range, std::vector<sf::Transformable*>& found) {
+    if (!((sf::FloatRect)boundary).intersects(range)) {
         return found;
     } else {
-        for(auto& p : objList) {
-            if(range.contains(p.getPosition().x, p.getPosition().y)) {
+        for (auto& p : objList) {
+            if (range.contains(p.getPosition().x, p.getPosition().y)) {
                 found.push_back(&p);
             }
         }
     }
 
-    if(divided) {
+    if (divided) {
         nw->query(range, found);
         ne->query(range, found);
         sw->query(range, found);
@@ -86,5 +96,13 @@ std::vector<sf::Transformable *> QTree::query(sf::FloatRect range, std::vector<s
 }
 
 void QTree::clear() {
-    // recursive clean up (dfs)
+    objList.clear();
+    if (divided) {
+        delete nw;
+        delete ne;
+        delete sw;
+        delete se;
+        divided = false;
+    }
 }
+

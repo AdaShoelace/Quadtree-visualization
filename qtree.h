@@ -8,9 +8,11 @@
 class QTree {
    public:
     QTree(int capacity, sf::FloatRect boundary, sf::RenderWindow *window);
+    ~QTree();
     void insert(sf::Transformable obj);
     void draw();     // debug only
     std::vector<sf::Transformable*> query(sf::FloatRect range, std::vector<sf::Transformable*>& found);
+    void clear();
 
    private:
     bool divided = false;
@@ -25,5 +27,4 @@ class QTree {
     QTree *se = NULL;
 
     void subdivide();
-    void clear();
 };
